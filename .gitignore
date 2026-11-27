@@ -1,2 +1,18 @@
+# Dependencias
 node_modules/
+
+# Variables de entorno
 .env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+
+# Archivos temporales
+.DS_Store
+Thumbs.db
+
+# Cobertura de pruebas
+coverage/

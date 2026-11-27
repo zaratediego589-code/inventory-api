@@ -1,21 +1,92 @@
-const express = require('express');
-const productoController = require('../controllers/productoController');
+const express = require("express");
+
+const productoController = require("../controllers/productoController");
+
+const verificarToken = require("../middlewares/authMiddleware");
+
+const verificarRol = require("../middlewares/roleMiddleware");
 
 const router = express.Router();
 
-// Registrar producto
-router.post('/', productoController.crearProducto);
 
-// Consultar todos los productos
-router.get('/', productoController.obtenerProductos);
+// ======================================
+// PROTEGER TODAS LAS RUTAS
+// ======================================
 
-// Consultar producto por ID
-router.get('/:id', productoController.obtenerProductoPorId);
+router.use(verificarToken);
 
-// Actualizar producto
-router.put('/:id', productoController.actualizarProducto);
 
-// Eliminar producto
-router.delete('/:id', productoController.eliminarProducto);
+// ======================================
+// REGISTRAR PRODUCTO
+// ======================================
+
+router.post(
+    "/",
+    verificarRol("administrador", "empleado"),
+    productoController.crearProducto
+);
+
+
+// ======================================
+// CONSULTAS Y REPORTES
+// ======================================
+
+router.get(
+    "/",
+    productoController.obtenerProductos
+);
+
+router.get(
+    "/categorias",
+    productoController.obtenerCategorias
+);
+
+router.get(
+    "/estadisticas",
+    productoController.obtenerEstadisticas
+);
+
+router.get(
+    "/reportes/categorias",
+    productoController.obtenerProductosPorCategoria
+);
+
+router.get(
+    "/reportes/stock",
+    productoController.obtenerStockPorProducto
+);
+
+router.get(
+    "/alertas",
+    productoController.obtenerAlertasStock
+);
+
+router.get(
+    "/:id",
+    productoController.obtenerProductoPorId
+);
+
+
+// ======================================
+// ACTUALIZAR PRODUCTO
+// ======================================
+
+router.put(
+    "/:id",
+    verificarRol("administrador", "empleado"),
+    productoController.actualizarProducto
+);
+
+
+// ======================================
+// ELIMINAR PRODUCTO
+// ======================================
+
+router.delete(
+    "/:id",
+    verificarRol("administrador"),
+    productoController.eliminarProducto
+);
+
 
 module.exports = router;

@@ -106,10 +106,119 @@ const eliminarProducto = async (req, res) => {
     }
 };
 
+// Consultar categorías
+const obtenerCategorias = async (req, res) => {
+
+    try {
+
+        const categorias =
+            await productoService.obtenerCategorias();
+
+        res.status(200).json(categorias);
+
+    } catch (error) {
+
+        res.status(500).json({
+            mensaje: 'Error al consultar categorías'
+        });
+
+    }
+
+};
+
+// Consultar estadísticas
+const obtenerEstadisticas = async (req, res) => {
+
+    try {
+
+        const estadisticas =
+            await productoService.obtenerEstadisticas();
+
+        res.status(200).json(estadisticas);
+
+    } catch (error) {
+
+        res.status(500).json({
+            mensaje: 'Error al consultar estadísticas'
+        });
+
+    }
+
+};
+
+const obtenerProductosPorCategoria = async (req, res) => {
+
+    try {
+
+        const datos =
+            await productoService.obtenerProductosPorCategoria();
+
+        res.status(200).json(datos);
+
+    } catch (error) {
+
+        res.status(500).json({
+            mensaje: "Error al obtener productos por categoría"
+        });
+
+    }
+
+};
+
+
+const obtenerStockPorProducto = async (req, res) => {
+
+    try {
+
+        const datos =
+            await productoService.obtenerStockPorProducto();
+
+        res.status(200).json(datos);
+
+    } catch (error) {
+
+        res.status(500).json({
+            mensaje: "Error al obtener stock por producto"
+        });
+
+    }
+
+};
+
+// ======================================
+// OBTENER ALERTAS DE STOCK
+// ======================================
+
+const obtenerAlertasStock = async (req, res) => {
+
+    try {
+
+        const alertas =
+            await productoService.obtenerAlertasStock();
+
+        res.status(200).json(alertas);
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            mensaje: "Error al obtener alertas de stock"
+
+        });
+
+    }
+
+};
+
 module.exports = {
     crearProducto,
     obtenerProductos,
     obtenerProductoPorId,
     actualizarProducto,
-    eliminarProducto
+    eliminarProducto,
+    obtenerCategorias,
+    obtenerEstadisticas,
+    obtenerProductosPorCategoria,
+    obtenerStockPorProducto,
+    obtenerAlertasStock
 };

@@ -77,11 +77,126 @@ const eliminarProducto = async (id) => {
     return await Producto.findByIdAndDelete(id);
 };
 
-// Exportar funciones
+// Consultar todas las categorías
+const obtenerCategorias = async () => {
+
+    const categorias = await Producto.distinct('categoria');
+
+    return categorias.sort();
+
+};
+
+
+// Obtener estadísticas del inventario
+const obtenerEstadisticas = async () => {
+
+    const resultado = await Producto.aggregate([
+
+        {
+            $group: {
+
+                _id: null,
+
+                totalProductos: {
+                    $sum: 1
+                },
+
+                totalUnidades: {
+                    $sum: "$stock"
+                },
+
+                valorInventario: {
+                    $sum: {
+                        $multiply: ["$precio", "$stock"]
+                    }
+                },
+
+                stockBajo: {
+                    $sum: {
+                        $cond: [
+                            { $lte: ["$stock", 5] },
+                            1,
+                            0
+                        ]
+                    }
+                }
+
+            }
+        }
+
+    ]);
+
+    return resultado[0] || {
+        totalProductos: 0,
+        totalUnidades: 0,
+        valorInventario: 0,
+        stockBajo: 0
+    };
+
+};
+
+const obtenerProductosPorCategoria = async () => {
+
+    return await Producto.aggregate([
+
+        {
+            $group: {
+                _id: "$categoria",
+                cantidad: { $sum: 1 }
+            }
+        },
+
+        {
+            $project: {
+                _id: 0,
+                categoria: "$_id",
+                cantidad: 1
+            }
+        },
+
+        {
+            $sort: { cantidad: -1 }
+        }
+
+    ]);
+
+};
+
+const obtenerStockPorProducto = async () => {
+
+    return await Producto.find()
+        .select("nombre stock -_id")
+        .sort({ stock: -1 })
+        .limit(10);
+
+};
+
+// ======================================
+// OBTENER PRODUCTOS CON STOCK BAJO
+// ======================================
+
+const obtenerAlertasStock = async () => {
+
+    return await Producto.find({
+
+        stock: { $lte: 5 }
+
+    })
+        .select("nombre categoria stock")
+        .sort({ stock: 1 });
+
+};
+
+
 module.exports = {
     crearProducto,
     obtenerProductos,
     obtenerProductoPorId,
     actualizarProducto,
-    eliminarProducto
+    eliminarProducto,
+    obtenerCategorias,
+    obtenerEstadisticas,
+    obtenerProductosPorCategoria,
+    obtenerStockPorProducto,
+    obtenerAlertasStock
 };
