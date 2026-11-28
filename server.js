@@ -20,6 +20,10 @@ const manejarErrores = require("./middlewares/errorMiddleware");
 
 const app = express();
 
+if (process.env.TRUST_PROXY === "1") {
+    app.set("trust proxy", 1);
+}
+
 const PORT = process.env.PORT || 3000;
 
 
@@ -167,9 +171,9 @@ conectarDB();
 // INICIAR SERVIDOR
 // ======================================
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
 
-    console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
+    console.log(`Servidor ejecutándose en el puerto ${PORT}`);
 
 });
 
